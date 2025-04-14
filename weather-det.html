@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Weather App</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-blue-100 min-h-screen flex items-center justify-center">
+  <div class="bg-white p-6 rounded-2xl shadow-xl max-w-sm w-full text-center">
+    <h1 class="text-2xl font-bold mb-4">Weather App</h1>
+
+    <input
+      id="city"
+      type="text"
+      placeholder="Enter city name"
+      class="w-full p-3 border rounded mb-4"
+    />
+
+    <button
+      onclick="getWeather()"
+      class="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 transition"
+    >
+      Get Weather
+    </button>
+
+    <div id="weather" class="mt-6 space-y-2 hidden">
+      <div class="text-xl font-semibold" id="city-name"></div>
+      <div class="text-lg" id="temp"></div>
+      <div id="desc" class="capitalize text-gray-600"></div>
+      <img id="icon" class="w-20 mx-auto" />
+    </div>
+  </div>
+
+  <script>
+    const apiKey = 'YOUR_API_KEY_HERE'; // Replace this with your actual OpenWeatherMap API key
+
+    function getWeather() {
+      const city = document.getElementById('city').value.trim();
+      if (!city) {
+        alert('Please enter a city name.');
+        return;
+      }
+
+      const url = `https://api.openweathermap.org/data/2.5/weather?q=${city}&units=metric&appid=${apiKey}`;
+
+      fetch(url)
+        .then(response => {
+          if (!response.ok) throw new Error("City not found");
+          return response.json();
+        })
+        .then(data => {
+          document.getElementById('weather').classList.remove('hidden');
+          document.getElementById('city-name').textContent = `${data.name}, ${data.sys.country}`;
+          document.getElementById('temp').textContent = `${data.main.temp}°C`;
+          document.getElementById('desc').textContent = data.weather[0].description;
+          document.getElementById('icon').src = `https://openweathermap.org/img/wn/${data.weather[0].icon}@2x.png`;
+        })
+        .catch(error => {
+          alert("Error: " + error.message);
+          document.getElementById('weather').classList.add('hidden');
+        });
+    }
+  </script>
+</body>
+</html>

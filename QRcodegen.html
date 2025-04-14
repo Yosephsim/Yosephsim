@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>QR Code Generator</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+</head>
+<body class="bg-gray-100 dark:bg-gray-900 text-gray-900 dark:text-white min-h-screen flex items-center justify-center transition-colors">
+  <div class="bg-white dark:bg-gray-800 p-6 rounded-2xl shadow-lg w-full max-w-md text-center space-y-4 mx-4">
+    <h1 class="text-2xl font-bold">QR Code Generator</h1>
+
+    <input
+      id="text-input"
+      type="text"
+      placeholder="Enter text or URL"
+      class="w-full border border-gray-300 dark:border-gray-700 rounded p-3 focus:outline-none focus:ring-2 focus:ring-blue-400 bg-gray-50 dark:bg-gray-700 text-black dark:text-white"
+    />
+
+    <div class="flex gap-2 justify-center">
+      <label class="text-sm">Foreground:
+        <input type="color" id="color-dark" value="#000000" class="ml-1">
+      </label>
+      <label class="text-sm">Background:
+        <input type="color" id="color-light" value="#ffffff" class="ml-1">
+      </label>
+    </div>
+
+    <button
+      onclick="generateQRCode()"
+      class="bg-blue-600 text-white px-6 py-2 rounded hover:bg-blue-700 transition"
+    >
+      Generate QR Code
+    </button>
+
+    <div id="qrcode" class="flex justify-center mt-4"></div>
+
+    <button
+      onclick="downloadQRCode()"
+      class="bg-green-600 text-white px-6 py-2 rounded hover:bg-green-700 transition"
+    >
+      Download QR Code
+    </button>
+
+    <button
+      onclick="toggleDarkMode()"
+      class="text-sm text-blue-500 underline mt-2"
+    >
+      Toggle Dark Mode
+    </button>
+  </div>
+
+  <script>
+    let qr;
+
+    function generateQRCode() {
+      const input = document.getElementById("text-input").value.trim();
+      const colorDark = document.getElementById("color-dark").value;
+      const colorLight = document.getElementById("color-light").value;
+      const qrContainer = document.getElementById("qrcode");
+
+      qrContainer.innerHTML = "";
+
+      if (!input) {
+        alert("Please enter text or a URL.");
+        return;
+      }
+
+      qr = new QRCode(qrContainer, {
+        text: input,
+        width: 200,
+        height: 200,
+        colorDark: colorDark,
+        colorLight: colorLight,
+        correctLevel: QRCode.CorrectLevel.H
+      });
+    }
+
+    function downloadQRCode() {
+      const canvas = document.querySelector("#qrcode canvas");
+      if (canvas) {
+        const link = document.createElement("a");
+        link.download = "qr-code.png";
+        link.href = canvas.toDataURL("image/png");
+        link.click();
+      } else {
+        alert("Please generate a QR code first.");
+      }
+    }
+
+    function toggleDarkMode() {
+      document.body.classList.toggle("dark");
+    }
+  </script>
+</body>
+</html>
